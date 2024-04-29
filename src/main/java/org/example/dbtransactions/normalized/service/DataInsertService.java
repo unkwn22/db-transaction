@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class DataInsertService {
@@ -37,6 +38,9 @@ public class DataInsertService {
     @PostConstruct
     @Transactional
     public void insertData() {
+        List<Hospital> foundHospitals = hospitalInteract.findAll();
+        if(!foundHospitals.isEmpty()) return;
+
         Care primary = new Care(1, "primary care hospital");
         Care secondary = new Care(2, "secondary care hospital");
         Care tertiary  = new Care(3, "tertiary care hospital");

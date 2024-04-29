@@ -9,4 +9,6 @@ public interface HospitalInteract {
     List<Hospital> saveHospitals(List<Hospital> hospitals);
 
     Hospital save(Hospital hospital);
+
+    List<Hospital> findAll();
 }

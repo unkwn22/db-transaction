@@ -27,4 +27,9 @@ public class HospitalInteractImpl implements HospitalInteract {
     public Hospital save(Hospital hospital) {
         return hospitalRepository.save(hospital);
     }
+
+    @Override
+    public List<Hospital> findAll() {
+        return hospitalRepository.findAll();
+    }
 }
