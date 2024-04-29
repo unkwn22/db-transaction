@@ -16,3 +16,6 @@ There is quite a difference between selecting from SQL to NoSQL databases. Moreo
   - Denormalization) In certain cases, denormalization may be necessary to optimize performance or simplify queries.
 
 In my view, while both associated tables and normalized tables offer valuable approaches to organizing relational data, the choice between them ultimately depends on the specific requirements and constraints of each project. While normalized tables prioritize data consistency and integrity, associated tables offer flexibility and simplicity in managing complex relationships. Additionally, judicious use of denormalization can help optimize performance without sacrificing data integrity. Ultimately, a balanced approach that considers the trade-offs and benefits of each method is essential for effective database design.
+
+### JPA, QueryDSL, MyBatis
+As we discussed specific strategy behind associated and normalized tables let compare the difference when it comes to JPA, QueryDSL, MyBatis mechanisms.
