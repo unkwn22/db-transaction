@@ -29,10 +29,10 @@ There are many ways to fetch data when it comes to JPA relation mapping.
 We have lazy fetch and eager fetch.
 1. Lazy fetch
    - Lazy fetch can be used in multiple occasions. Say you have a Hospital table that has relations with tables of Country, SubjectTreatment, Care. For specific occasions, there may not or maybe times when you will need to call their related classes. 
-   Calling their classes by `hospital.getCare()` JPA will execute a `+1` query inorder for it to know which Care data you are trying to retrieve for the following Hospital Id. Lazy fetch comes in to play when ones target is to use a entity relations dynamically. 
-    </br>
-    The bottom test query execution results as the following.
-    </br>
+     Calling their classes by `hospital.getCare()` JPA will execute a `+1` query inorder for it to know which Care data you are trying to retrieve for the following Hospital Id. Lazy fetch comes in to play when ones target is to use a entity relations dynamically. 
+      </br>
+      The bottom test query execution results as the following.
+      </br>
         ```java
         @Test
         @Transactional(readOnly = true)
@@ -51,7 +51,7 @@ We have lazy fetch and eager fetch.
         }
         ```
         ![Selection](./src/main/resources/files/test2.PNG)
-    </br> 
+      </br> 
 2. Eager fetch
    - Regardless of the dynamic entity calling, there might be time when you need to use all the related entities. </br> 
    Hospital has a relations with Country of many to one, Country has a relation with City one to many. Having the Country (Mapped in Hospital) fetch type to `Lazy` and having the City fetch type (Mapped in Country) to Eager will result as the following.
