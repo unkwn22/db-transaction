@@ -6,6 +6,7 @@ import org.example.dbtransactions.normalized.repository.repositories.HospitalRep
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class HospitalInteractImpl implements HospitalInteract {
@@ -31,5 +32,12 @@ public class HospitalInteractImpl implements HospitalInteract {
     @Override
     public List<Hospital> findAll() {
         return hospitalRepository.findAll();
+    }
+
+    @Override
+    public Hospital findById(Long id) {
+        Optional<Hospital> searchedHospital = hospitalRepository.findById(id);
+        if(searchedHospital.isEmpty()) throw new RuntimeException();
+        return searchedHospital.get();
     }
 }

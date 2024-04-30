@@ -2,17 +2,18 @@ package org.example.dbtransactions.normalized.entity;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
-@Table(name = "subject_treatment")
-public class SubjectTreatment {
+@Table(name = "city")
+public class City {
 
-    public SubjectTreatment() {}
+    public City() {}
 
-    public SubjectTreatment(String name) {
+    public City(
+        String name,
+        Country country
+    ) {
         this.name = name;
+        this.country = country;
     }
 
     @Id
@@ -23,12 +24,12 @@ public class SubjectTreatment {
     @Column(name = "name", nullable = false, updatable = false)
     protected String name;
 
-    @OneToMany(
-        targetEntity = Hospital.class,
-        fetch = FetchType.LAZY,
-        mappedBy = "subjectTreatment"
+    @ManyToOne(
+        targetEntity = Country.class,
+        fetch = FetchType.LAZY
     )
-    protected List<Hospital> hospitals = new ArrayList<>();
+    @JoinColumn(name = "country_id")
+    protected Country country = new Country();
 
     public Long getId() {
         return id;
@@ -38,7 +39,7 @@ public class SubjectTreatment {
         return name;
     }
 
-    public List<Hospital> getHospitals() {
-        return hospitals;
+    public Country getCountry() {
+        return country;
     }
 }

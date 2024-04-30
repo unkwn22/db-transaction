@@ -11,4 +11,6 @@ public interface HospitalInteract {
     Hospital save(Hospital hospital);
 
     List<Hospital> findAll();
+
+    Hospital findById(Long id);
 }

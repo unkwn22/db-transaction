@@ -18,4 +18,49 @@ There is quite a difference between selecting from SQL to NoSQL databases. Moreo
 In my view, while both associated tables and normalized tables offer valuable approaches to organizing relational data, the choice between them ultimately depends on the specific requirements and constraints of each project. While normalized tables prioritize data consistency and integrity, associated tables offer flexibility and simplicity in managing complex relationships. Additionally, judicious use of denormalization can help optimize performance without sacrificing data integrity. Ultimately, a balanced approach that considers the trade-offs and benefits of each method is essential for effective database design.
 
 ### JPA, QueryDSL, MyBatis
-As we discussed specific strategy behind associated and normalized tables let compare the difference when it comes to JPA, QueryDSL, MyBatis mechanisms.
+As we discussed the specific strategy behind associated and normalized tables, lets compare the difference when it comes to JPA, QueryDSL, MyBatis mechanisms.
+
+### JPA fetch types
+There are many ways to fetch data when it comes to JPA relation mapping.
+We have lazy fetch and eager fetch.
+1. Lazy fetch
+   - Lazy fetch can be used in multiple occasions. Say you have a Hospital table that has relations with tables of Country, SubjectTreatment, Care. For specific occasions, there may not or maybe times when you will need to call their related classes. 
+   Calling their classes by `hospital.getCare()` JPA will execute a `+1` query inorder for it to know which Care data you are trying to retrieve for the following Hospital Id. Lazy fetch comes in to play when ones target is to use a entity relations dynamically. 
+    </br>
+    The bottom test query execution results as the following.
+    </br>
+        ```java
+        @Test
+        @Transactional(readOnly = true)
+        void NormalizedDatabaseLazyFetchNonCall () throws Exception {
+            Hospital hospital = hospitalInteract.findById(1L);
+            System.out.println(hospital.getName());
+        }
+        ```
+        ![Selection](./src/main/resources/files/test1.PNG)
+        ```java
+        @Test
+        @Transactional(readOnly = true)
+        void NormalizedDatabaseLazyFetchCall () throws Exception {
+            Hospital hospital = hospitalInteract.findById(1L);
+            System.out.println(hospital.getCare().getTypeName());
+        }
+        ```
+        ![Selection](./src/main/resources/files/test2.PNG)
+    </br> 
+2. Eager fetch
+   - Regardless of the dynamic entity calling, there might be time when you need to use all the related entities. </br> 
+   Hospital has a relations with Country of many to one, Country has a relation with City one to many. Having the Country (Mapped in Hospital) fetch type to `Lazy` and having the City fetch type (Mapped in Country) to Eager will result as the following.
+   </br>
+       ```java
+       @Order(3) 
+       @DisplayName("Normalized - Eager fetch call")
+       @Test 
+       @Transactional(readOnly = true)
+       void NormalizedDatabaseEagerFetchCall () throws Exception {
+           Hospital hospital = hospitalInteract.findById(1L);
+           System.out.println(hospital.getCountry().getName());
+       }
+       ```
+      ![Selection](./src/main/resources/files/test3.PNG)
+   </br> Regardless of not calling cities entity in Country, Eager fetch will intuitively call all the related City entities along when Country is called.

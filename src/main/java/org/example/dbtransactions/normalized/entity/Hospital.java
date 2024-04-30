@@ -48,4 +48,24 @@ public class Hospital {
     )
     @JoinColumn(name = "subject_treatment_id")
     protected SubjectTreatment subjectTreatment = new SubjectTreatment();
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Care getCare() {
+        return care;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public SubjectTreatment getSubjectTreatment() {
+        return subjectTreatment;
+    }
 }

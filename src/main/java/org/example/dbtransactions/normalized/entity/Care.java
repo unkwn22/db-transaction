@@ -37,4 +37,21 @@ public class Care {
     )
     protected List<Hospital> hospitals = new ArrayList<>();
 
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public List<Hospital> getHospitals() {
+        return hospitals;
+    }
 }

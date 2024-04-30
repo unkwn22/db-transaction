@@ -36,4 +36,31 @@ public class Country {
         mappedBy = "country"
     )
     protected List<Hospital> hospitals = new ArrayList<>();
+
+    @OneToMany(
+        targetEntity = City.class,
+        fetch = FetchType.EAGER,
+        mappedBy = "country"
+    )
+    protected List<City> cities = new ArrayList<>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Hospital> getHospitals() {
+        return hospitals;
+    }
+
+    public List<City> getCities() {
+        return cities;
+    }
 }

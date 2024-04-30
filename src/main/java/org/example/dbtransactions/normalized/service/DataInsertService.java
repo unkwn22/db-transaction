@@ -1,14 +1,8 @@
 package org.example.dbtransactions.normalized.service;
 
 import jakarta.annotation.PostConstruct;
-import org.example.dbtransactions.normalized.entity.Care;
-import org.example.dbtransactions.normalized.entity.Country;
-import org.example.dbtransactions.normalized.entity.Hospital;
-import org.example.dbtransactions.normalized.entity.SubjectTreatment;
-import org.example.dbtransactions.normalized.interfaces.CareInteract;
-import org.example.dbtransactions.normalized.interfaces.CountryInteract;
-import org.example.dbtransactions.normalized.interfaces.HospitalInteract;
-import org.example.dbtransactions.normalized.interfaces.SubjectTreatmentInteract;
+import org.example.dbtransactions.normalized.entity.*;
+import org.example.dbtransactions.normalized.interfaces.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,17 +16,20 @@ public class DataInsertService {
     private final CountryInteract countryInteract;
     private final HospitalInteract hospitalInteract;
     private final SubjectTreatmentInteract subjectTreatmentInteract;
+    private final CityInteract cityInteract;
 
     public DataInsertService(
         CareInteract careInteract,
         CountryInteract countryInteract,
         HospitalInteract hospitalInteract,
-        SubjectTreatmentInteract subjectTreatmentInteract
+        SubjectTreatmentInteract subjectTreatmentInteract,
+        CityInteract cityInteract
     ) {
         this.careInteract = careInteract;
         this.countryInteract = countryInteract;
         this.hospitalInteract = hospitalInteract;
         this.subjectTreatmentInteract = subjectTreatmentInteract;
+        this.cityInteract = cityInteract;
     }
 
     @PostConstruct
@@ -54,6 +51,19 @@ public class DataInsertService {
         Country savedKorea = countryInteract.save(korea);
         Country savedJapan = countryInteract.save(japan);
         Country savedUnitedStates = countryInteract.save(usa);
+
+        City seoul = new City("Seoul", savedKorea);
+        City gyeonggi = new City("Gyeong-gi", savedKorea);
+        City busan = new City("Busan", savedKorea);
+
+        City tokyo = new City("Tokyo", savedJapan);
+        City okinawa = new City("Okinawa", savedJapan);
+        City osaka = new City("Osaka", savedJapan);
+
+        City la = new City("Los-Angeles", savedUnitedStates);
+        City newyork = new City("New york", savedUnitedStates);
+        City utah = new City("Utah", savedUnitedStates);
+        cityInteract.saveCities(Arrays.asList(seoul, gyeonggi, busan, tokyo, okinawa, osaka, la, newyork, utah));
 
         SubjectTreatment internal = new SubjectTreatment("Internal Medicine");
         SubjectTreatment pulmonology = new SubjectTreatment("Pulmonology");
