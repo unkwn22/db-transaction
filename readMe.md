@@ -54,8 +54,8 @@ We have lazy fetch and eager fetch.
       </br> 
 2. Eager fetch
    - Regardless of the dynamic entity calling, there might be time when you need to use all the related entities. </br> 
-   Hospital has a relations with Country of many to one, Country has a relation with City one to many. Having the Country (Mapped in Hospital) fetch type to `Lazy` and having the City fetch type (Mapped in Country) to Eager will result as the following.
-   </br>
+     Hospital has a relations with Country of many to one, Country has a relation with City one to many. Having the Country (Mapped in Hospital) fetch type to `Lazy` and having the City fetch type (Mapped in Country) to Eager will result as the following.
+     </br>
        ```java
        @Order(3) 
        @DisplayName("Normalized - Eager fetch call")
@@ -67,7 +67,7 @@ We have lazy fetch and eager fetch.
        }
        ```
       ![Selection](./src/main/resources/files/test3.PNG)
-   </br> Regardless of not calling cities entity in Country, Eager fetch will intuitively call all the related City entities along when Country is called.
+     </br> Regardless of not calling cities entity in Country, Eager fetch will intuitively call all the related City entities along when Country is called.
 
 ### QueryDSL (Associated tables)
 Here is the visual ERD used for this example.
