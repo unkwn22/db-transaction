@@ -1,6 +1,12 @@
-package org.example.dbtransactions.normalized.service;
+package org.example.dbtransactions.common.service;
 
 import jakarta.annotation.PostConstruct;
+import org.example.dbtransactions.association.entity.Family;
+import org.example.dbtransactions.association.entity.People;
+import org.example.dbtransactions.association.entity.PeopleFamilyRelation;
+import org.example.dbtransactions.association.interfaces.FamilyInteract;
+import org.example.dbtransactions.association.interfaces.PeopleFamilyRelationInteract;
+import org.example.dbtransactions.association.interfaces.PeopleInteract;
 import org.example.dbtransactions.normalized.entity.*;
 import org.example.dbtransactions.normalized.interfaces.*;
 import org.springframework.stereotype.Service;
@@ -12,29 +18,42 @@ import java.util.List;
 @Service
 public class DataInsertService {
 
+    /* Normalized database */
     private final CareInteract careInteract;
     private final CountryInteract countryInteract;
     private final HospitalInteract hospitalInteract;
     private final SubjectTreatmentInteract subjectTreatmentInteract;
     private final CityInteract cityInteract;
 
+    /* Association database */
+    private final PeopleInteract peopleInteract;
+    private final FamilyInteract familyInteract;
+    private final PeopleFamilyRelationInteract peopleFamilyRelationInteract;
+
+
     public DataInsertService(
         CareInteract careInteract,
         CountryInteract countryInteract,
         HospitalInteract hospitalInteract,
         SubjectTreatmentInteract subjectTreatmentInteract,
-        CityInteract cityInteract
+        CityInteract cityInteract,
+        PeopleInteract peopleInteract,
+        FamilyInteract familyInteract,
+        PeopleFamilyRelationInteract peopleFamilyRelationInteract
     ) {
         this.careInteract = careInteract;
         this.countryInteract = countryInteract;
         this.hospitalInteract = hospitalInteract;
         this.subjectTreatmentInteract = subjectTreatmentInteract;
         this.cityInteract = cityInteract;
+        this.peopleInteract = peopleInteract;
+        this.familyInteract = familyInteract;
+        this.peopleFamilyRelationInteract = peopleFamilyRelationInteract;
     }
 
     @PostConstruct
     @Transactional
-    public void insertData() {
+    public void normalizedInsertData() {
         List<Hospital> foundHospitals = hospitalInteract.findAll();
         if(!foundHospitals.isEmpty()) return;
 
@@ -90,5 +109,48 @@ public class DataInsertService {
         Hospital hospital10 = new Hospital("UCLA Medical Center", savedTertiary, savedUnitedStates, savedPulmonology);
         Hospital hospital11 = new Hospital("Mayo Clinic", savedPrimary, savedUnitedStates, savedAllergy);
         hospitalInteract.saveHospitals(Arrays.asList(hospital1, hospital2, hospital3, hospital4, hospital5, hospital6, hospital7, hospital8, hospital9, hospital10, hospital11));
+    }
+
+    @PostConstruct
+    @Transactional
+    public void associationInsertData() {
+        List<People> foundPeople = peopleInteract.findAll();
+        if(!foundPeople.isEmpty()) return;
+
+        People jason = new People("Jason");
+        People grace = new People("Grace");
+        People jae = new People("Jae");
+        People youngsun = new People("Young Sun");
+
+        People yerim = new People("Yerim");
+        People gwangjin = new People("Gwangjin");
+        People wonyoung = new People("Won young");
+        People savedjason = peopleInteract.save(jason);
+        People savedgrace = peopleInteract.save(grace);
+        People savedjae = peopleInteract.save(jae);
+        People savedyoungsun = peopleInteract.save(youngsun);
+        People savedyerim = peopleInteract.save(yerim);
+        People savedgwangjin = peopleInteract.save(gwangjin);
+        People savedwonyoung = peopleInteract.save(wonyoung);
+
+        Family choi = new Family("Choi");
+        Family shin = new Family("Shin");
+        Family kim = new Family("Kim");
+        Family savedChoi = familyInteract.save(choi);
+        Family savedShin = familyInteract.save(shin);
+        Family savedKim = familyInteract.save(kim);
+
+        PeopleFamilyRelation choiRelation1 = new PeopleFamilyRelation(savedjason, savedChoi);
+        PeopleFamilyRelation choiRelation2 = new PeopleFamilyRelation(savedgrace, savedChoi);
+        PeopleFamilyRelation choiRelation3 = new PeopleFamilyRelation(savedjae, savedChoi);
+        PeopleFamilyRelation choiRelation4 = new PeopleFamilyRelation(savedyoungsun, savedChoi);
+
+        PeopleFamilyRelation shinRelation = new PeopleFamilyRelation(savedyoungsun, savedShin);
+
+        PeopleFamilyRelation kimRelation1 = new PeopleFamilyRelation(savedyerim, savedKim);
+        PeopleFamilyRelation kimRelation2 = new PeopleFamilyRelation(savedgwangjin, savedKim);
+        PeopleFamilyRelation kimRelation3 = new PeopleFamilyRelation(savedwonyoung, savedKim);
+
+        peopleFamilyRelationInteract.savePeopleFamilyRelations(Arrays.asList(choiRelation1, choiRelation2, choiRelation3, choiRelation4, shinRelation, kimRelation1, kimRelation2, kimRelation3));
     }
 }

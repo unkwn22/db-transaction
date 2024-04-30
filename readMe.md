@@ -20,7 +20,11 @@ In my view, while both associated tables and normalized tables offer valuable ap
 ### JPA, QueryDSL, MyBatis
 As we discussed the specific strategy behind associated and normalized tables, lets compare the difference when it comes to JPA, QueryDSL, MyBatis mechanisms.
 
-### JPA fetch types
+### JPA fetch types (Normalized tables)
+Here is the visual ERD used for this example.
+</br>
+![Selection](./src/main/resources/files/normalized_erd.PNG)
+</br></br>
 There are many ways to fetch data when it comes to JPA relation mapping.
 We have lazy fetch and eager fetch.
 1. Lazy fetch
@@ -64,3 +68,72 @@ We have lazy fetch and eager fetch.
        ```
       ![Selection](./src/main/resources/files/test3.PNG)
    </br> Regardless of not calling cities entity in Country, Eager fetch will intuitively call all the related City entities along when Country is called.
+
+### QueryDSL (Associated tables)
+Here is the visual ERD used for this example.
+</br>
+![Selection](./src/main/resources/files/associated_erd.PNG)
+</br></br>
+As we discussed the various methods of a JPA fetch types in normalized tables, in this example we will take a look at which methods would be an advantage in performance wise.
+As the ERD shown above, we have a `family` table and a `people` table. Their relations are managed by the table `people_family_relation`. Say `Jason, Jae, Grace` & `Youngsun` belong to the Family `Choi`. Meanwhile, `Youngsun` is the wife and she also has her birth family name `Shin`. Instead of adding additional columns to the `people`'s database table to identify `Young sun`'s family group, we can keep it as the way they are and add each corresponding `people` and `people` ids in the `people_family_relation` table to resolve this complexity.
+
+1. JPA
+    - If we were to view `Young sun`'s family group we would execute the java code as the following. Here are the results as well.
+      </br>
+       ```java
+       @Order(4)
+       @DisplayName("Associated - Jpa call")
+       @Test
+       @Transactional(readOnly = true)
+       void AssociatedDatabaseJpaCall () throws Exception {
+            People youngSun = peopleInteract.findById(4L);
+            List<PeopleFamilyRelation> relations = youngSun.getPeopleRelations();
+            for(PeopleFamilyRelation relation : relations) {
+                System.out.println(relation.getFamily().getName());
+            }
+       }
+       ```
+      ![Selection](./src/main/resources/files/test4.PNG)
+      </br>
+      As you can see the result image, 4 query executions has been executed. Jpa does not have a efficient query execution for junction tables.
+2. QueryDSL
+   - There are numerous ways to resolve un-efficient query executions, one of them being QueryDSL. I'm not going to explain the details of this framework, but `it is a SQL-like querying structured Java code.
+   Instead of writing SQL Queries as strings, which can be error-prone and difficult to maintain, QueryDSL allows you to write queries using Java syntax.` </br>
+   So how will this resolve the numerous un-wanted query executions? Well the answer is writing a SQL query. We can fetch and join all the needed columns and data in one query.
+     </br>
+       ```java
+       @Order(5)
+       @DisplayName("Associated - QueryDsl call")
+       @Test
+       @Transactional(readOnly = true)
+       void AssociatedDatabaseQueryDSLCall () throws Exception {
+       List<Tuple> tuples = peopleCustomInteract.findPeopleById(4L);
+    
+            CustomPeopleCommand customPeopleCommand = new CustomPeopleCommand();
+            customPeopleCommand.setId(tuples.get(0).get(0, Long.class));
+            customPeopleCommand.setName(tuples.get(0).get(1, String.class));
+            List<CustomFamilyCommand> customFamilyCommands = new ArrayList<>();
+            for(Tuple tuple : tuples) {
+                CustomFamilyCommand command = new CustomFamilyCommand();
+                command.setId(tuple.get(2, Long.class));
+                command.setName(tuple.get(3, String.class));
+                customFamilyCommands.add(command);
+            }
+            customPeopleCommand.setFamilies(customFamilyCommands);
+    
+            System.out.println("People id: " + customPeopleCommand.getId());
+            System.out.println("Name id: " + customPeopleCommand.getName());
+            System.out.println("===================================");
+            System.out.println("");
+            for(CustomFamilyCommand command : customPeopleCommand.getFamilies()) {
+                System.out.println("Family id: " + command.getId());
+                System.out.println("Family name: " + command.getName());
+                System.out.println("===================================");
+            }
+       }
+       ```
+     ![Selection](./src/main/resources/files/test5.PNG)
+     </br>
+     You can take a look at the QueryDSL code at `./src/main/java/org/example/dbtransactions/queryDSL/repositories/PeopleCustomInteractImpl.java` </br>
+     As you can see results printed, we've successfully executed all the requirements into one single query. This will significantly increase the query performance and reduce database connectivity counts.  
+   
